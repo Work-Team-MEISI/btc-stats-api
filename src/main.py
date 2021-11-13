@@ -1,10 +1,12 @@
 from fastapi.security.api_key import APIKey
 from fastapi import Depends, FastAPI
+from typing import List
 
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.functions import mode
 from src.database import get_db
-from src.models import Stats
-from src.schemas import CreateStats
+from src import models
+from src import schemas
 
 from src.helpers import validate_api_key
 from datetime import datetime
@@ -12,7 +14,7 @@ from datetime import datetime
 from dateutil.parser import parse
 
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 @app.get("/")
 async def root(api_key: APIKey = Depends(validate_api_key)):
@@ -20,25 +22,16 @@ async def root(api_key: APIKey = Depends(validate_api_key)):
 
 @app.post("/stats", status_code=201)
 def create(
-    details: CreateStats,
+    stats: List[schemas.Stats],
     api_key: APIKey = Depends(validate_api_key),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db)
 ):
+    stats = [models.Stats(**stat.dict()) for stat in stats]
 
-    stat = Stats(
-        lower=details.lower,
-        higher=details.higher,
-        open=details.open,
-        close=details.close,
-        volume=details.volume,
-        change=details.change,
-        timestamp=details.timestamp
-    ) 
-    
-    db.add(stat)
+    db.add_all(stats)
     db.commit()
 
     return {
         'success': True,
-        "created_id": stat.id
+        'stat_ids': [stat.id for stat in stats]
     }

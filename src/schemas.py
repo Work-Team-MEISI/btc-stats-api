@@ -3,7 +3,7 @@ from typing import Optional
 
 from dateutil.parser import parse
 
-class CreateStats(BaseModel):
+class Stats(BaseModel):
     lower: float
     higher: float
     open: float
@@ -20,3 +20,6 @@ class CreateStats(BaseModel):
             raise ValueError('Date must be valid')
             
         return v
+
+    class Config:
+        orm_mode = True
