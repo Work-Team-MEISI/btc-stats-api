@@ -19,8 +19,8 @@ async def root(api_key: APIKey = Depends(validate_api_key)):
     return {"message": "Hello World"}
 
 @app.post("/stats", status_code=201)
-def create(
-    stats: List[schemas.create_stats_schema],
+def create_stats(
+    stats: List[schemas.create_stats],
     api_key: APIKey = Depends(validate_api_key),
     db: Session = Depends(get_db)
 ):
@@ -34,11 +34,35 @@ def create(
         'stat_ids': [stat.id for stat in stats]
     }
 
-@app.get("/stats", response_model=Page[schemas.retrieve_stats_schema])
+@app.get("/stats", response_model=Page[schemas.retrieve_stats])
 def get_stats(
     db: Session = Depends(get_db)
 ):
     stats = db.query(models.Stats).all()
+
+    return paginate(stats)
+
+@app.post("/weekly-stats", status_code=201)
+def create_weekly_stats(
+    stats: List[schemas.create_avg_stats],
+    api_key: APIKey = Depends(validate_api_key),
+    db: Session = Depends(get_db)
+):
+    stats = [models.WeeklyStats(**stat.dict()) for stat in stats]
+
+    db.add_all(stats)
+    db.commit()
+
+    return {
+        'success': True,
+        'stat_ids': [stat.id for stat in stats]
+    }
+
+@app.get("/weekly-stats", response_model=Page[schemas.retrieve_avg_stats])
+def get_stats(
+    db: Session = Depends(get_db)
+):
+    stats = db.query(models.WeeklyStats).all()
 
     return paginate(stats)
 
