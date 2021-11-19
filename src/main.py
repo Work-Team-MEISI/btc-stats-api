@@ -1,7 +1,8 @@
 from fastapi.security.api_key import APIKey
 from fastapi import Depends, FastAPI
-from typing import List
+from typing import List, Optional
 
+from sqlalchemy import desc, asc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import mode
 
@@ -36,9 +37,16 @@ def create_stats(
 
 @app.get("/stats", response_model=Page[schemas.retrieve_stats])
 def get_stats(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    limit: Optional[int] = None,
+    date_order: Optional[str] = None
 ):
-    stats = db.query(models.Stats).all()
+    stats = None
+
+    if limit and date_order:
+        stats = db.query(models.Stats).order_by(eval(date_order+"(models.Stats.timestamp)")).limit(limit).all()
+    else:
+        stats = db.query(models.Stats).all()
 
     return paginate(stats)
 
@@ -60,9 +68,16 @@ def create_weekly_stats(
 
 @app.get("/weekly-stats", response_model=Page[schemas.retrieve_avg_stats])
 def get_stats(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    limit: Optional[int] = None,
+    date_order: Optional[str] = None
 ):
-    stats = db.query(models.WeeklyStats).all()
+    stats = None
+
+    if limit and date_order:
+        stats = db.query(models.WeeklyStats).order_by(eval(date_order+"(models.WeeklyStats.timestamp)")).limit(limit).all()
+    else:
+        stats = db.query(models.WeeklyStats).all()
 
     return paginate(stats)
 
