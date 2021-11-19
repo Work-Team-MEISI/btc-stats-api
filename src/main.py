@@ -50,7 +50,7 @@ def get_stats(
 
     return paginate(stats)
 
-@app.post("/weekly-stats", status_code=201)
+@app.post("/week-stats", status_code=201)
 def create_weekly_stats(
     stats: List[schemas.create_avg_stats],
     api_key: APIKey = Depends(validate_api_key),
@@ -66,7 +66,7 @@ def create_weekly_stats(
         'stat_ids': [stat.id for stat in stats]
     }
 
-@app.get("/weekly-stats", response_model=Page[schemas.retrieve_avg_stats])
+@app.get("/week-stats", response_model=Page[schemas.retrieve_avg_stats])
 def get_stats(
     db: Session = Depends(get_db),
     limit: Optional[int] = None,
@@ -78,6 +78,68 @@ def get_stats(
         stats = db.query(models.WeeklyStats).order_by(eval(date_order+"(models.WeeklyStats.timestamp)")).limit(limit).all()
     else:
         stats = db.query(models.WeeklyStats).all()
+
+    return paginate(stats)
+
+@app.post("/month-stats", status_code=201)
+def create_weekly_stats(
+    stats: List[schemas.create_avg_stats],
+    api_key: APIKey = Depends(validate_api_key),
+    db: Session = Depends(get_db)
+):
+    stats = [models.MonthlyStats(**stat.dict()) for stat in stats]
+
+    db.add_all(stats)
+    db.commit()
+
+    return {
+        'success': True,
+        'stat_ids': [stat.id for stat in stats]
+    }
+
+@app.get("/month-stats", response_model=Page[schemas.retrieve_avg_stats])
+def get_stats(
+    db: Session = Depends(get_db),
+    limit: Optional[int] = None,
+    date_order: Optional[str] = None
+):
+    stats = None
+
+    if limit and date_order:
+        stats = db.query(models.MonthlyStats).order_by(eval(date_order+"(models.MonthlyStats.timestamp)")).limit(limit).all()
+    else:
+        stats = db.query(models.MonthlyStats).all()
+
+    return paginate(stats)
+
+@app.post("/anual-stats", status_code=201)
+def create_weekly_stats(
+    stats: List[schemas.create_avg_stats],
+    api_key: APIKey = Depends(validate_api_key),
+    db: Session = Depends(get_db)
+):
+    stats = [models.AnualStats(**stat.dict()) for stat in stats]
+
+    db.add_all(stats)
+    db.commit()
+
+    return {
+        'success': True,
+        'stat_ids': [stat.id for stat in stats]
+    }
+
+@app.get("/anual-stats", response_model=Page[schemas.retrieve_avg_stats])
+def get_stats(
+    db: Session = Depends(get_db),
+    limit: Optional[int] = None,
+    date_order: Optional[str] = None
+):
+    stats = None
+
+    if limit and date_order:
+        stats = db.query(models.AnualStats).order_by(eval(date_order+"(models.AnualStats.timestamp)")).limit(limit).all()
+    else:
+        stats = db.query(models.AnualStats).all()
 
     return paginate(stats)
 
