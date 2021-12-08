@@ -64,6 +64,12 @@ def get_stats(
             status_code=400,
             detail="Make sure 'bucket' query param is 'day', 'week', 'month', or 'year'."
         )
+
+    if date_order == 'desc' and bucket != 'day':
+        raise HTTPException(
+            status_code=400,
+            detail="Make sure when 'bucket' is not 'day', 'date_order' must be 'asc'."
+        )
         
     stats = db.query(models.Stats)
 
