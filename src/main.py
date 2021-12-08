@@ -113,6 +113,9 @@ def get_stats(
 
         return paginate(avg_stats)
 
+    if limit:
+        stats = stats.limit(limit)
+
     return paginate(stats.all())
 
 
