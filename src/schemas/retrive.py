@@ -8,9 +8,10 @@ class Stats(BaseModel):
     id: int
     lower: float
     higher: float
-    open: float
-    close: float
-    volume: float
+    open: Optional[float] = None
+    close: Optional[float] = None
+    volume: Optional[float] = None
+    avg_close: Optional[float] = None
     change: Optional[float] = None
     timestamp: datetime
 
