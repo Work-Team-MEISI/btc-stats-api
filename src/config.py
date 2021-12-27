@@ -12,7 +12,6 @@ if ENV == 'PROD':
     SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL").replace('postgres', 'postgresql')
 elif ENV == 'DOCKER':
     SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL").replace('@localhost', '@btc-db')
-    print(SQLALCHEMY_DATABASE_URL)
 else:
     SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 

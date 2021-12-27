@@ -1,7 +1,10 @@
 from fastapi.exceptions import HTTPException
 from fastapi.security.api_key import APIKey
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from typing import List, Optional
+
 
 from sqlalchemy import desc, asc
 from sqlalchemy.orm import Session
@@ -21,10 +24,20 @@ from src.helpers import (
     buckets,
     get_date_intervals_list
 )
-    
-
 
 app = FastAPI(debug=True)
+
+origins = [
+    "http://localhost:4200"
+]
+    
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root(api_key: APIKey = Depends(validate_api_key)):
