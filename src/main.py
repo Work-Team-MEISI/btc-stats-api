@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from typing import List, Optional
 
-
 from sqlalchemy import desc, asc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import mode
@@ -103,11 +102,15 @@ def get_stats(
         avg_stats = []
 
         for i, date_list in enumerate(date_intervals_list): 
+            
             stats_by_date_iterval = stats.filter(
                     models.Stats.timestamp >= date_list[0]
                 ).filter(
                     models.Stats.timestamp <= date_list[1]
                 ).all()
+
+            if(len(stats_by_date_iterval) == 0):
+                break
 
             avg_close = sum([stat_by_date.close for stat_by_date in stats_by_date_iterval])/len(stats_by_date_iterval)
             min_lower = min([stat_by_date.lower for stat_by_date in stats_by_date_iterval])
