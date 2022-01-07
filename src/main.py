@@ -28,7 +28,7 @@ from src.helpers import (
 app = FastAPI(debug=True)
 
 origins = [
-    "http://localhost:4200"
+    "*"
 ]
     
 app.add_middleware(
