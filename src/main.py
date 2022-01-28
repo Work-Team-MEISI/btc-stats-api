@@ -158,4 +158,19 @@ def get_svmr_stats(
 
     return paginate(svmr_stats)
 
+@app.delete("/svmr")
+def delete_all_svmr_stats(
+    api_key: APIKey = Depends(validate_api_key),
+    db: Session = Depends(get_db)
+):
+    try:
+        num_rows_deleted = db.query(models.SVMRStats).delete()
+        db.commit()
+
+        return HTTPException(status_code=200, detail="Success deleting all SVMR Stats!")
+    except:
+        db.rollback()
+
+        return HTTPException(status_code=500, detail="Something went wrong while deleting SVMR Stats.")
+
 add_pagination(app)
