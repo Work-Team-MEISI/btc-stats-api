@@ -135,4 +135,30 @@ def get_stats(
     return paginate(stats.all())
 
 
+
+
+@app.post("/svmr", status_code=201)
+def create_svmr_stats(
+    smvr_stats: List[schemas.create_svmr_stats],
+    api_key: APIKey = Depends(validate_api_key),
+    db: Session = Depends(get_db)
+):
+    smvr_stats = [models.SVMRStats(**stat.dict()) for stat in smvr_stats]
+
+    db.add_all(smvr_stats)
+    db.commit()
+
+
+
+@app.get("/svmr", response_model=Page[schemas.retrieve_svmr_stats])
+def get_svmr_stats(
+    db: Session = Depends(get_db)
+):
+    svmr_stats = db.query(models.SVMRStats).all()
+
+    import pdb
+    pdb.set_trace()
+
+    return paginate(svmr_stats)
+
 add_pagination(app)

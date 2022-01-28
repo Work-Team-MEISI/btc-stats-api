@@ -52,3 +52,12 @@ class AnualStats(Base):
     change = Column(Float, nullable=True)
     timestamp = Column(DateTime, nullable=False)
 
+class SVMRStats(Base):
+    __tablename__ = 'svmr_stats'
+
+    id = Column(Integer, primary_key=True)
+    value = Column(Float, nullable=False)
+    accuracy = Column(Float, nullable=False)
+    date = Column(DateTime, nullable=False)
+
+

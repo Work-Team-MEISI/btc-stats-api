@@ -31,3 +31,11 @@ class AvgStats(BaseModel):
     class Config:
         orm_mode = True
 
+class SVMRStats(BaseModel):
+    id: int
+    value: float
+    accuracy: float
+    date: str
+
+    class Config:
+        orm_mode = True

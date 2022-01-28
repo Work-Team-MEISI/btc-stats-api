@@ -45,3 +45,21 @@ class AvgStats(BaseModel):
 
     class Config:
         orm_mode = True
+
+class SVMRStats(BaseModel):
+    value: float
+    accuracy: float
+    date: str
+
+    @validator('date')
+    def validate_date(cls, v):
+        try:
+            parse(v)
+        except:
+            raise ValueError('Date must be valid')
+            
+        return v
+
+    class Config:
+        orm_mode = True
+
