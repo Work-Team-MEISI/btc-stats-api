@@ -156,9 +156,6 @@ def get_svmr_stats(
 ):
     svmr_stats = db.query(models.SVMRStats).all()
 
-    import pdb
-    pdb.set_trace()
-
     return paginate(svmr_stats)
 
 add_pagination(app)
