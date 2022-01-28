@@ -148,6 +148,11 @@ def create_svmr_stats(
     db.add_all(smvr_stats)
     db.commit()
 
+    return {
+        'success': True,
+        'stat_ids': [stat.id for stat in smvr_stats]
+    }
+
 
 
 @app.get("/svmr", response_model=Page[schemas.retrieve_svmr_stats])
