@@ -35,7 +35,7 @@ class SVMRStats(BaseModel):
     id: int
     value: float
     accuracy: float
-    date: str
+    date: datetime
 
     class Config:
         orm_mode = True
